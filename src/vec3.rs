@@ -6,6 +6,10 @@ pub struct Vec3(pub f32, pub f32, pub f32);
 pub type Point3 = Vec3;
 
 impl Vec3 {
+    pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
+        return Vec3(x, y, z);
+    }
+
     pub fn dot(&self, v: &Vec3) -> f32 {
         self.0 * v.0 + self.1 * v.1 + self.2 * v.2
     }
