@@ -7,7 +7,7 @@ pub struct Ray<'a> {
 
 impl<'a> Ray<'a> {
     pub fn at(&self, t: f32) -> Point3 {
-        self.orig + &(&self.dir.unit_vector() * t)
+        self.orig + &(self.dir * t)
     }
 }
 
@@ -22,6 +22,6 @@ mod tests {
             dir: &Vec3(1.0, 1.0, 0.0),
         };
 
-        assert_eq!(ray.at(2.0), Vec3(2.0_f32.sqrt(), 2.0_f32.sqrt(), 1.0))
+        assert_eq!(ray.at(2.0), Vec3(2.0, 2.0, 1.0))
     }
 }
