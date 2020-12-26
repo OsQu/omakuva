@@ -27,6 +27,12 @@ impl ops::MulAssign<f32> for Vec3 {
     }
 }
 
+impl ops::DivAssign<f32> for Vec3 {
+    fn div_assign(&mut self, t: f32) {
+        *self *= 1.0 / t
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -53,5 +59,13 @@ mod tests {
         vector *= 3.0;
 
         assert_eq!(vector, Vec3(3.0, 6.0, 9.0))
+    }
+
+    #[test]
+    fn test_div_assign() {
+        let mut vector = Vec3(2.0, 4.0, 6.0);
+        vector /= 2.0;
+
+        assert_eq!(vector, Vec3(1.0, 2.0, 3.0));
     }
 }
