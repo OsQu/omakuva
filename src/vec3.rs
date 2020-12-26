@@ -10,6 +10,18 @@ impl Vec3 {
         return Vec3(x, y, z);
     }
 
+    pub fn x(&self) -> f32 {
+        self.0
+    }
+
+    pub fn y(&self) -> f32 {
+        self.1
+    }
+
+    pub fn z(&self) -> f32 {
+        self.2
+    }
+
     pub fn dot(&self, v: &Vec3) -> f32 {
         self.0 * v.0 + self.1 * v.1 + self.2 * v.2
     }
