@@ -3,6 +3,8 @@ use std::ops;
 #[derive(PartialEq, Debug)]
 pub struct Vec3(pub f32, pub f32, pub f32);
 
+pub type Point3 = Vec3;
+
 impl Vec3 {
     pub fn dot(&self, v: &Vec3) -> f32 {
         self.0 * v.0 + self.1 * v.1 + self.2 * v.2
@@ -37,9 +39,9 @@ impl ops::Neg for Vec3 {
     }
 }
 
-impl ops::Add for Vec3 {
+impl ops::Add for &Vec3 {
     type Output = Vec3;
-    fn add(self, other: Vec3) -> Vec3 {
+    fn add(self, other: &Vec3) -> Vec3 {
         Vec3(self.0 + other.0, self.1 + other.1, self.2 + other.2)
     }
 }
@@ -120,7 +122,7 @@ mod tests {
     #[test]
     fn test_add() {
         assert_eq!(
-            Vec3(1.0, 1.0, 1.0) + Vec3(2.0, 2.0, 2.0),
+            &Vec3(1.0, 1.0, 1.0) + &Vec3(2.0, 2.0, 2.0),
             Vec3(3.0, 3.0, 3.0)
         );
     }
