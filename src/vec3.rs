@@ -1,7 +1,17 @@
 use std::ops;
 
 #[derive(PartialEq, Debug)]
-pub struct Vec3(f32, f32, f32);
+pub struct Vec3(pub f32, pub f32, pub f32);
+
+impl Vec3 {
+    pub fn length(&self) -> f32 {
+        self.length_squared().sqrt()
+    }
+
+    fn length_squared(&self) -> f32 {
+        self.0.powi(2) + self.1.powi(2) + self.2.powi(2)
+    }
+}
 
 impl ops::Neg for Vec3 {
     type Output = Vec3;
@@ -67,5 +77,12 @@ mod tests {
         vector /= 2.0;
 
         assert_eq!(vector, Vec3(1.0, 2.0, 3.0));
+    }
+
+    #[test]
+    fn test_length() {
+        let vector = Vec3(2.0, 4.0, 4.0);
+
+        assert_eq!(vector.length(), 6.0)
     }
 }
