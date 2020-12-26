@@ -19,6 +19,14 @@ impl ops::AddAssign for Vec3 {
     }
 }
 
+impl ops::MulAssign<f32> for Vec3 {
+    fn mul_assign(&mut self, t: f32) {
+        self.0 *= t;
+        self.1 *= t;
+        self.2 *= t;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -37,5 +45,13 @@ mod tests {
         vector += Vec3(1.0, 2.0, 3.0);
 
         assert_eq!(vector, Vec3(2.0, 4.0, 6.0))
+    }
+
+    #[test]
+    fn test_mul_assign_f32() {
+        let mut vector = Vec3(1.0, 2.0, 3.0);
+        vector *= 3.0;
+
+        assert_eq!(vector, Vec3(3.0, 6.0, 9.0))
     }
 }
