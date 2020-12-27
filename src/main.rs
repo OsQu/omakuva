@@ -15,7 +15,9 @@ mod sphere;
 mod vec3;
 
 use crate::color::*;
+use crate::hittable::*;
 use crate::ray::*;
+use crate::sphere::*;
 use crate::vec3::*;
 
 fn hit_sphere(center: &Point3, radius: f32, ray: &Ray) -> f32 {
@@ -36,16 +38,26 @@ fn hit_sphere(center: &Point3, radius: f32, ray: &Ray) -> f32 {
 }
 
 fn ray_color(ray: &Ray) -> Color {
-    let ball_center = Point3::new(0.0, 0.0, -1.0);
-    let t = hit_sphere(&ball_center, 0.5, ray);
-    if t > 0.0 {
-        let normal = (ray.at(t) - ball_center).unit_vector();
-        return 0.5 * Color::new(normal.x() + 1.0, normal.y() + 1.0, normal.z() + 1.0);
-    }
-    let unit_direction = ray.dir.unit_vector();
-    let t = 0.5 * (unit_direction.y() + 1.0);
+    let sphere = Sphere {
+        center: Point3::new(0.0, 0.0, -1.0),
+        radius: 0.5,
+    };
 
-    return &((1.0 - t) * &Color::new(1.0, 1.0, 1.0)) + &(t * &Color::new(0.5, 0.7, 1.0));
+    let sphere_hit = sphere.hit(&ray, 0.0, 50.0);
+
+    match sphere_hit {
+        Some(record) => {
+            let unit = record.normal.unit_vector();
+            return 0.5 * Color::new(unit.x() + 1.0, unit.y() + 1.0, unit.z() + 1.0);
+        }
+        None => {
+            // No hit, render background
+            let unit_direction = ray.dir.unit_vector();
+            let t = 0.5 * (unit_direction.y() + 1.0);
+
+            return &((1.0 - t) * &Color::new(1.0, 1.0, 1.0)) + &(t * &Color::new(0.5, 0.7, 1.0));
+        }
+    }
 }
 
 fn main() {
