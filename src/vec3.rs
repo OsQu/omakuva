@@ -47,11 +47,18 @@ impl Vec3 {
     }
 }
 
-impl ops::Neg for Vec3 {
+impl ops::Neg for &Vec3 {
     type Output = Vec3;
 
     fn neg(self) -> Vec3 {
         Vec3(-self.0, -self.1, -self.2)
+    }
+}
+
+impl ops::Add for Vec3 {
+    type Output = Vec3;
+    fn add(self, other: Vec3) -> Vec3 {
+        Vec3(self.0 + other.0, self.1 + other.1, self.2 + other.2)
     }
 }
 
@@ -69,10 +76,16 @@ impl ops::AddAssign for Vec3 {
         self.2 += other.2;
     }
 }
-
 impl ops::Sub for Vec3 {
     type Output = Vec3;
     fn sub(self, other: Vec3) -> Vec3 {
+        Vec3(self.0 - other.0, self.1 - other.1, self.2 - other.2)
+    }
+}
+
+impl ops::Sub for &Vec3 {
+    type Output = Vec3;
+    fn sub(self, other: &Vec3) -> Vec3 {
         Vec3(self.0 - other.0, self.1 - other.1, self.2 - other.2)
     }
 }
@@ -85,11 +98,35 @@ impl ops::Mul for Vec3 {
     }
 }
 
+impl ops::Mul for &Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, other: &Vec3) -> Vec3 {
+        Vec3(self.0 * other.0, self.1 * other.1, self.2 * other.2)
+    }
+}
+
+impl ops::Mul<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, t: f32) -> Vec3 {
+        Vec3(self.0 * t, self.1 * t, self.2 * t)
+    }
+}
+
 impl ops::Mul<f32> for &Vec3 {
     type Output = Vec3;
 
     fn mul(self, t: f32) -> Vec3 {
         Vec3(self.0 * t, self.1 * t, self.2 * t)
+    }
+}
+
+impl ops::Mul<Vec3> for f32 {
+    type Output = Vec3;
+
+    fn mul(self, other: Vec3) -> Vec3 {
+        other * self
     }
 }
 
@@ -106,6 +143,13 @@ impl ops::MulAssign<f32> for Vec3 {
         self.0 *= t;
         self.1 *= t;
         self.2 *= t;
+    }
+}
+impl ops::Div<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, t: f32) -> Vec3 {
+        (1.0 / t) * self
     }
 }
 
@@ -130,7 +174,7 @@ mod tests {
     #[test]
     fn test_neg() {
         let vector = Vec3(1.0, 2.0, 3.0);
-        let negated_vector = -vector;
+        let negated_vector = -&vector;
 
         assert_eq!(negated_vector, Vec3(-1.0, -2.0, -3.0))
     }
@@ -154,7 +198,7 @@ mod tests {
     #[test]
     fn test_sub() {
         assert_eq!(
-            Vec3(3.0, 2.0, 1.0) - Vec3(1.0, 1.0, 1.0),
+            &Vec3(3.0, 2.0, 1.0) - &Vec3(1.0, 1.0, 1.0),
             Vec3(2.0, 1.0, 0.0)
         )
     }
@@ -162,7 +206,7 @@ mod tests {
     #[test]
     fn test_mul() {
         assert_eq!(
-            Vec3(1.0, 2.0, 3.0) * Vec3(1.0, 2.0, 3.0),
+            &Vec3(1.0, 2.0, 3.0) * &Vec3(1.0, 2.0, 3.0),
             Vec3(1.0, 4.0, 9.0)
         )
     }
