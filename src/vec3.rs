@@ -42,7 +42,7 @@ impl Vec3 {
         self.length_squared().sqrt()
     }
 
-    fn length_squared(&self) -> f32 {
+    pub fn length_squared(&self) -> f32 {
         self.0.powi(2) + self.1.powi(2) + self.2.powi(2)
     }
 }

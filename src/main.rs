@@ -19,17 +19,17 @@ use crate::vec3::*;
 fn hit_sphere(center: &Point3, radius: f32, ray: &Ray) -> f32 {
     // Calculate discriminant from ray-sphere intersection
     let oc = ray.orig - center;
-    let a = ray.dir.dot(ray.dir);
-    let b = 2.0 * oc.dot(ray.dir);
-    let c = oc.dot(&oc) - radius * radius;
+    let a = ray.dir.length_squared();
+    let half_b = oc.dot(ray.dir);
+    let c = oc.length_squared() - radius * radius;
 
     // Discriminant: b^2 - 4ac: == 0 -> 1 roots, > 0 -> 1 root
-    let discriminant = b * b - 4.0 * a * c;
+    let discriminant = half_b * half_b - a * c;
 
     if discriminant < 0.0 {
         return -1.0;
     } else {
-        return (-b - discriminant.sqrt()) / (2.0 * a);
+        return (-half_b - discriminant.sqrt()) / a;
     }
 }
 
