@@ -16,7 +16,22 @@ use crate::color::*;
 use crate::ray::*;
 use crate::vec3::*;
 
+fn hit_sphere(center: &Point3, radius: f32, ray: &Ray) -> bool {
+    // Calculate discriminant from ray-sphere intersection
+    let oc = ray.orig - center;
+    let a = ray.dir.dot(ray.dir);
+    let b = 2.0 * oc.dot(ray.dir);
+    let c = oc.dot(&oc) - radius * radius;
+
+    // Discriminant: b^2 - 4ac: == 0 -> 1 roots, > 0 -> 1 root
+    let discriminant = b * b - 4.0 * a * c;
+    return discriminant >= 0.0;
+}
+
 fn ray_color(ray: &Ray) -> Color {
+    if hit_sphere(&Point3::new(0.0, 0.0, -1.0), 0.5, ray) {
+        return Color::new(1.0, 0.0, 0.0);
+    }
     let unit_direction = ray.dir.unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
 
