@@ -9,7 +9,9 @@ const VIEWPORT_WIDTH: f32 = ASPECT_RATIO * VIEWPORT_HEIGHT;
 const FOCAL_LENGTH: f32 = 1.0;
 
 mod color;
+mod hittable;
 mod ray;
+mod sphere;
 mod vec3;
 
 use crate::color::*;
