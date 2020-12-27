@@ -12,7 +12,16 @@ mod color;
 mod ray;
 mod vec3;
 
+use crate::color::*;
+use crate::ray::*;
 use crate::vec3::*;
+
+fn ray_color(ray: &Ray) -> Color {
+    let unit_direction = ray.dir.unit_vector();
+    let t = 0.5 * (unit_direction.y() + 1.0);
+
+    return &((1.0 - t) * &Color::new(1.0, 1.0, 1.0)) + &(t * &Color::new(0.5, 0.7, 1.0));
+}
 
 fn main() {
     // Camera
@@ -20,7 +29,7 @@ fn main() {
     let horizontal = Vec3::new(VIEWPORT_WIDTH, 0.0, 0.0);
     let vertical = Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
     let lower_left_corner =
-        origin - &horizontal / 2.0 - &vertical / 2.0 - Vec3::new(0.0, 0.0, FOCAL_LENGTH);
+        &origin - &(&horizontal / 2.0) - &vertical / 2.0 - Vec3::new(0.0, 0.0, FOCAL_LENGTH);
 
     // Render
     eprintln!("Starting render");
@@ -32,11 +41,17 @@ fn main() {
     for j in (0..IMAGE_HEIGHT).rev() {
         eprintln!("Scan lines remaining: {}", j);
         for i in 0..IMAGE_WIDTH {
-            let r: f32 = i as f32 / (IMAGE_WIDTH - 1) as f32;
-            let g: f32 = j as f32 / (IMAGE_HEIGHT - 1) as f32;
-            let b: f32 = 0.25;
+            let u: f32 = i as f32 / (IMAGE_WIDTH - 1) as f32;
+            let v: f32 = j as f32 / (IMAGE_HEIGHT - 1) as f32;
 
-            color::Color::new(r, g, b).write();
+            let dir = &(&lower_left_corner + &(u * &horizontal) + (v * &vertical)) - &origin;
+            let ray = Ray {
+                orig: &origin,
+                dir: &dir,
+            };
+
+            let color = ray_color(&ray);
+            color.write();
         }
     }
 
