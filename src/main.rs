@@ -10,6 +10,7 @@ const FOCAL_LENGTH: f32 = 1.0;
 
 mod color;
 mod hittable;
+mod hittable_list;
 mod ray;
 mod sphere;
 mod vec3;
