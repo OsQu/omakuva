@@ -32,12 +32,21 @@ impl hittable::Hittable for Sphere {
         }
 
         let point = ray.at(root);
-        let normal = (&point - &self.center) / self.radius;
+        let outward_normal = (&point - &self.center) / self.radius;
+
+        let front_face = ray.dir.dot(&outward_normal) > 0.0;
+
+        let normal = if front_face {
+            outward_normal
+        } else {
+            -&outward_normal
+        };
 
         return Some(hittable::HitRecord {
             t: root,
             point: point,
             normal: normal,
+            front_face,
         });
     }
 }
