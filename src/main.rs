@@ -21,35 +21,12 @@ use crate::ray::*;
 use crate::sphere::*;
 use crate::vec3::*;
 
-fn hit_sphere(center: &Point3, radius: f32, ray: &Ray) -> f32 {
-    // Calculate discriminant from ray-sphere intersection
-    let oc = ray.orig - center;
-    let a = ray.dir.length_squared();
-    let half_b = oc.dot(ray.dir);
-    let c = oc.length_squared() - radius * radius;
+fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
+    let world_hit = world.hit(&ray, 0.0, std::f32::INFINITY);
 
-    // Discriminant: b^2 - 4ac: == 0 -> 1 roots, > 0 -> 1 root
-    let discriminant = half_b * half_b - a * c;
-
-    if discriminant < 0.0 {
-        return -1.0;
-    } else {
-        return (-half_b - discriminant.sqrt()) / a;
-    }
-}
-
-fn ray_color(ray: &Ray) -> Color {
-    let sphere = Sphere {
-        center: Point3::new(0.0, 0.0, -1.0),
-        radius: 0.5,
-    };
-
-    let sphere_hit = sphere.hit(&ray, 0.0, 50.0);
-
-    match sphere_hit {
+    match world_hit {
         Some(record) => {
-            let unit = record.normal.unit_vector();
-            return 0.5 * Color::new(unit.x() + 1.0, unit.y() + 1.0, unit.z() + 1.0);
+            return 0.5 * (record.normal + Color::new(1.0, 1.0, 1.0));
         }
         None => {
             // No hit, render background
@@ -68,6 +45,17 @@ fn main() {
     let vertical = Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
     let lower_left_corner =
         &origin - &(&horizontal / 2.0) - &vertical / 2.0 - Vec3::new(0.0, 0.0, FOCAL_LENGTH);
+
+    let mut world = hittable_list::HittableList::new();
+    world.add(Box::new(Sphere {
+        center: Point3::new(0.0, 0.0, -1.0),
+        radius: 0.5,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3::new(0.0, -100.5, -1.0),
+        radius: 100.0,
+    }));
 
     // Render
     eprintln!("Starting render");
@@ -88,7 +76,7 @@ fn main() {
                 dir: &dir,
             };
 
-            let color = ray_color(&ray);
+            let color = ray_color(&ray, &world);
             color.write();
         }
     }
