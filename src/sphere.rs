@@ -37,9 +37,9 @@ impl hittable::Hittable for Sphere {
         let front_face = ray.dir.dot(&outward_normal) > 0.0;
 
         let normal = if front_face {
-            outward_normal
-        } else {
             -&outward_normal
+        } else {
+            outward_normal
         };
 
         return Some(hittable::HitRecord {
