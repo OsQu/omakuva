@@ -17,14 +17,27 @@ use rand::prelude::*;
 
 const IMAGE_WIDTH: u32 = 400;
 const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f32 / camera::ASPECT_RATIO) as u32;
-const SAMPLES_PER_PIXEL: i32 = 20;
+const SAMPLES_PER_PIXEL: i32 = 100;
+const MAX_DEPTH: i32 = 50;
 
-fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
-    let world_hit = world.hit(&ray, 0.0, std::f32::INFINITY);
+fn ray_color(ray: &Ray, world: &dyn Hittable, depth: i32) -> Color {
+    if depth <= 0 {
+        return Color::new(0.0, 0.0, 0.0);
+    }
+    let world_hit = world.hit(&ray, 0.001, std::f32::INFINITY);
 
     match world_hit {
         Some(record) => {
-            return 0.5 * (record.normal + Color::new(1.0, 1.0, 1.0));
+            let target = &record.point + &record.normal + Vec3::random_in_unit_sphere();
+            return 0.5
+                * ray_color(
+                    &Ray {
+                        orig: &record.point,
+                        dir: &target - &record.point,
+                    },
+                    world,
+                    depth - 1,
+                );
         }
         None => {
             // No hit, render background
@@ -64,7 +77,7 @@ fn main() {
                 let u: f32 = (i as f32 + rng.gen::<f32>()) / (IMAGE_WIDTH - 1) as f32;
                 let v: f32 = (j as f32 + rng.gen::<f32>()) / (IMAGE_HEIGHT - 1) as f32;
 
-                return acc + ray_color(&camera.get_ray(u, v), &world);
+                return acc + ray_color(&camera.get_ray(u, v), &world, MAX_DEPTH);
             });
 
             color.write(SAMPLES_PER_PIXEL);
