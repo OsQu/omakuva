@@ -16,6 +16,10 @@ impl Vec3 {
         return Vec3(rng.gen(), rng.gen(), rng.gen());
     }
 
+    pub fn random_unit_vector() -> Vec3 {
+        return Vec3::random_in_unit_sphere().unit_vector();
+    }
+
     pub fn random_in_unit_sphere() -> Vec3 {
         loop {
             let p = Vec3::random();
