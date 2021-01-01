@@ -1,9 +1,9 @@
+use crate::utils;
 use crate::vec3;
 
 pub type Color = vec3::Vec3;
 
 impl Color {
-
     pub fn r(&self) -> f32 {
         self.0
     }
@@ -15,10 +15,20 @@ impl Color {
     pub fn b(&self) -> f32 {
         self.2
     }
-    pub fn write(&self) {
-        let ir = (255.999 * self.r()) as u32;
-        let ig = (255.999 * self.g()) as u32;
-        let ib = (255.999 * self.b()) as u32;
+    pub fn write(&self, samples_per_pixel: i32) {
+        let mut r = self.r();
+        let mut g = self.g();
+        let mut b = self.b();
+
+        let scale = 1.0 / (samples_per_pixel as f32);
+
+        r *= scale;
+        g *= scale;
+        b *= scale;
+
+        let ir = (256.0 * utils::clamp(r, 0.0, 0.999)) as u32;
+        let ig = (256.0 * utils::clamp(g, 0.0, 0.999)) as u32;
+        let ib = (256.0 * utils::clamp(b, 0.0, 0.999)) as u32;
         println!("{} {} {}", ir, ig, ib)
     }
 }

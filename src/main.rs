@@ -5,6 +5,7 @@ mod hittable;
 mod hittable_list;
 mod ray;
 mod sphere;
+mod utils;
 mod vec3;
 
 use crate::color::*;
@@ -12,9 +13,11 @@ use crate::hittable::*;
 use crate::ray::*;
 use crate::sphere::*;
 use crate::vec3::*;
+use rand::prelude::*;
 
 const IMAGE_WIDTH: u32 = 400;
 const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f32 / camera::ASPECT_RATIO) as u32;
+const SAMPLES_PER_PIXEL: i32 = 20;
 
 fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
     let world_hit = world.hit(&ray, 0.0, std::f32::INFINITY);
@@ -34,6 +37,7 @@ fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
 }
 
 fn main() {
+    let mut rng = rand::thread_rng();
     let camera = camera::Camera::new();
     let mut world = hittable_list::HittableList::new();
     world.add(Box::new(Sphere {
@@ -56,11 +60,14 @@ fn main() {
     for j in (0..IMAGE_HEIGHT).rev() {
         eprintln!("Scan lines remaining: {}", j);
         for i in 0..IMAGE_WIDTH {
-            let u: f32 = i as f32 / (IMAGE_WIDTH - 1) as f32;
-            let v: f32 = j as f32 / (IMAGE_HEIGHT - 1) as f32;
+            let color = (0..SAMPLES_PER_PIXEL).fold(Color::new(0.0, 0.0, 0.0), |acc, _sample| {
+                let u: f32 = (i as f32 + rng.gen::<f32>()) / (IMAGE_WIDTH - 1) as f32;
+                let v: f32 = (j as f32 + rng.gen::<f32>()) / (IMAGE_HEIGHT - 1) as f32;
 
-            let color = ray_color(&camera.get_ray(u, v), &world);
-            color.write();
+                return acc + ray_color(&camera.get_ray(u, v), &world);
+            });
+
+            color.write(SAMPLES_PER_PIXEL);
         }
     }
 
