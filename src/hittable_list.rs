@@ -1,24 +1,24 @@
 use crate::hittable;
 use crate::ray;
 
-pub struct HittableList {
-    objects: Vec<Box<dyn hittable::Hittable>>,
+pub struct HittableList<'a> {
+    objects: Vec<Box<dyn hittable::Hittable + 'a>>,
 }
 
-impl HittableList {
-    pub fn new() -> HittableList {
+impl<'a> HittableList<'a> {
+    pub fn new() -> HittableList<'a> {
         HittableList { objects: vec![] }
     }
 
-    pub fn add(&mut self, object: Box<dyn hittable::Hittable>) {
+    pub fn add(&mut self, object: Box<dyn hittable::Hittable + 'a>) {
         self.objects.push(object);
     }
 }
 
-impl hittable::Hittable for HittableList {
+impl<'a> hittable::Hittable for HittableList<'a> {
     fn hit(&self, ray: &ray::Ray, t_min: f32, t_max: f32) -> Option<hittable::HitRecord> {
-        struct ClosestObject {
-            record: Option<hittable::HitRecord>,
+        struct ClosestObject<'a> {
+            record: Option<hittable::HitRecord<'a>>,
             closest_so_far: f32,
         }
 

@@ -3,6 +3,7 @@ mod camera;
 mod color;
 mod hittable;
 mod hittable_list;
+mod lambertian;
 mod material;
 mod ray;
 mod sphere;
@@ -53,17 +54,21 @@ fn ray_color(ray: &Ray, world: &dyn Hittable, depth: i32) -> Color {
 fn main() {
     let mut rng = rand::thread_rng();
     let camera = camera::Camera::new();
+
+    let material_ground = lambertian::Lambertian::new(Color::new(0.8, 0.8, 0.0));
     let mut world = hittable_list::HittableList::new();
+
     world.add(Box::new(Sphere {
         center: Point3::new(0.0, 0.0, -1.0),
         radius: 0.5,
+        material: &material_ground,
     }));
 
     world.add(Box::new(Sphere {
         center: Point3::new(0.0, -100.5, -1.0),
         radius: 100.0,
+        material: &material_ground,
     }));
-
     // Render
     eprintln!("Starting render");
 

@@ -1,7 +1,7 @@
 use rand::prelude::*;
 use std::ops;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Vec3(pub f32, pub f32, pub f32);
 
 pub type Point3 = Vec3;
@@ -55,6 +55,11 @@ impl Vec3 {
 
     pub fn unit_vector(&self) -> Vec3 {
         self / self.length()
+    }
+
+    pub fn near_zero(&self) -> bool {
+        let s = 1.0e-8;
+        return (self.0.abs() < s) && (self.1.abs() < s) && (self.2.abs() < s);
     }
 
     pub fn length(&self) -> f32 {
@@ -272,6 +277,14 @@ mod tests {
     fn test_cross() {
         let vector = Vec3(1.0, 2.0, 3.0);
         assert_eq!(vector.cross(&Vec3(1.0, 5.0, 7.0)), Vec3(-1.0, -4.0, 3.0))
+    }
+
+    #[test]
+    fn test_near_zero() {
+        let vector_near_zero = Vec3(1.0e-10, 1.0e-9, -1.0e-10).near_zero();
+        let vector_not_near_zero = Vec3(1.0, 1.0, 1.0).near_zero();
+        assert_eq!(vector_near_zero, true);
+        assert_eq!(vector_not_near_zero, false);
     }
 
     #[test]

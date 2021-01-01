@@ -1,13 +1,15 @@
 use crate::hittable;
+use crate::material;
 use crate::ray;
 use crate::vec3::*;
 
-pub struct Sphere {
+pub struct Sphere<'a> {
     pub center: Point3,
     pub radius: f32,
+    pub material: &'a dyn material::Material,
 }
 
-impl hittable::Hittable for Sphere {
+impl<'a> hittable::Hittable for Sphere<'a> {
     fn hit(&self, ray: &ray::Ray, t_min: f32, t_max: f32) -> Option<hittable::HitRecord> {
         // Calculate discriminant from ray-sphere intersection
         let oc = ray.orig - &self.center;
@@ -47,6 +49,7 @@ impl hittable::Hittable for Sphere {
             point: point,
             normal: normal,
             front_face,
+            material: self.material,
         });
     }
 }

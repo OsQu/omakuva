@@ -4,9 +4,9 @@ use crate::ray;
 
 pub trait Material {
     /// Returns tuple (attenuation, scattered ray)
-    fn scatter(
+    fn scatter<'a>(
         &self,
         ray_in: &ray::Ray,
-        hit_record: &hittable::HitRecord,
-    ) -> (color::Color, ray::Ray);
+        hit_record: &'a hittable::HitRecord,
+    ) -> Option<(color::Color, ray::Ray<'a>)>;
 }
