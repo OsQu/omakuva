@@ -22,9 +22,9 @@ impl Color {
 
         let scale = 1.0 / (samples_per_pixel as f32);
 
-        r *= scale;
-        g *= scale;
-        b *= scale;
+        r = (scale * r).sqrt();
+        g = (scale * g).sqrt();
+        b = (scale * b).sqrt();
 
         let ir = (256.0 * utils::clamp(r, 0.0, 0.999)) as u32;
         let ig = (256.0 * utils::clamp(g, 0.0, 0.999)) as u32;
