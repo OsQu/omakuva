@@ -5,6 +5,7 @@ mod hittable;
 mod hittable_list;
 mod lambertian;
 mod material;
+mod metal;
 mod ray;
 mod sphere;
 mod utils;
@@ -55,18 +56,33 @@ fn main() {
     let camera = camera::Camera::new();
 
     let material_ground = lambertian::Lambertian::new(Color::new(0.8, 0.8, 0.0));
+    let material_center = lambertian::Lambertian::new(Color::new(1.0, 0.2, 0.2));
+    let material_left = metal::Metal::new(Color::new(0.8, 0.8, 0.8));
+    let material_right = metal::Metal::new(Color::new(0.8, 0.6, 0.2));
     let mut world = hittable_list::HittableList::new();
-
-    world.add(Box::new(Sphere {
-        center: Point3::new(0.0, 0.0, -1.0),
-        radius: 0.5,
-        material: &material_ground,
-    }));
 
     world.add(Box::new(Sphere {
         center: Point3::new(0.0, -100.5, -1.0),
         radius: 100.0,
         material: &material_ground,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3::new(0.0, 0.0, -1.0),
+        radius: 0.5,
+        material: &material_center,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3::new(-1.0, 0.0, -1.0),
+        radius: 0.5,
+        material: &material_left,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3::new(1.0, 0.0, -1.0),
+        radius: 0.5,
+        material: &material_right,
     }));
     // Render
     eprintln!("Starting render");
