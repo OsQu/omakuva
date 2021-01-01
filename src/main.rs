@@ -3,6 +3,7 @@ mod camera;
 mod color;
 mod hittable;
 mod hittable_list;
+mod material;
 mod ray;
 mod sphere;
 mod utils;
@@ -24,8 +25,8 @@ fn ray_color(ray: &Ray, world: &dyn Hittable, depth: i32) -> Color {
     if depth <= 0 {
         return Color::new(0.0, 0.0, 0.0);
     }
-    let world_hit = world.hit(&ray, 0.001, std::f32::INFINITY);
 
+    let world_hit = world.hit(&ray, 0.001, std::f32::INFINITY);
     match world_hit {
         Some(record) => {
             let target = &record.point + &record.normal + Vec3::random_unit_vector();
