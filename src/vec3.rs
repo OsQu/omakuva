@@ -1,3 +1,4 @@
+use rand::prelude::*;
 use std::ops;
 
 #[derive(PartialEq, Debug)]
@@ -8,6 +9,20 @@ pub type Point3 = Vec3;
 impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
         return Vec3(x, y, z);
+    }
+
+    pub fn random() -> Vec3 {
+        let mut rng = rand::thread_rng();
+        return Vec3(rng.gen(), rng.gen(), rng.gen());
+    }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Vec3::random();
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
     }
 
     pub fn x(&self) -> f32 {
@@ -171,6 +186,11 @@ impl ops::DivAssign<f32> for Vec3 {
 mod tests {
     use super::*;
 
+    #[test]
+    fn test_random_in_unit_sphere() {
+        let p = Vec3::random_in_unit_sphere();
+        assert_eq!(p.length_squared() < 1.0, true);
+    }
     #[test]
     fn test_neg() {
         let vector = Vec3(1.0, 2.0, 3.0);
