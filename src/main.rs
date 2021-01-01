@@ -64,7 +64,5 @@ fn main() {
         }
     }
 
-    let foo = vec3::Vec3(1.0, 2.0, 3.0);
-    foo.length();
     eprintln!("Done.");
 }
