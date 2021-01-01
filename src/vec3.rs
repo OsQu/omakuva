@@ -62,6 +62,10 @@ impl Vec3 {
         return (self.0.abs() < s) && (self.1.abs() < s) && (self.2.abs() < s);
     }
 
+    pub fn reflect(&self, normal: &Vec3) -> Vec3 {
+        return self - &((2.0 * self.dot(normal)) * normal);
+    }
+
     pub fn length(&self) -> f32 {
         self.length_squared().sqrt()
     }
