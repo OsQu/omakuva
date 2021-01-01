@@ -20,7 +20,11 @@ impl material::Material for Lambertian {
         _ray_in: &ray::Ray,
         hit_record: &'a hittable::HitRecord,
     ) -> Option<(color::Color, ray::Ray<'a>)> {
-        let scatter_direction = &hit_record.normal + &Vec3::random_unit_vector();
+        let mut scatter_direction = &hit_record.normal + &Vec3::random_unit_vector();
+
+        if scatter_direction.near_zero() {
+            scatter_direction = hit_record.normal.clone()
+        }
         let scattered = ray::Ray {
             orig: &hit_record.point,
             dir: scatter_direction,
