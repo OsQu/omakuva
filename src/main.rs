@@ -30,16 +30,15 @@ fn ray_color(ray: &Ray, world: &dyn Hittable, depth: i32) -> Color {
     let world_hit = world.hit(&ray, 0.001, std::f32::INFINITY);
     match world_hit {
         Some(record) => {
-            let target = &record.point + &record.normal + Vec3::random_unit_vector();
-            return 0.5
-                * ray_color(
-                    &Ray {
-                        orig: &record.point,
-                        dir: &target - &record.point,
-                    },
-                    world,
-                    depth - 1,
-                );
+            let scatter = record.material.scatter(&ray, &record);
+            match scatter {
+                Some((attenuation, scattered)) => {
+                    return attenuation * ray_color(&scattered, world, depth - 1)
+                }
+                None => {
+                    return Color::new(0.0, 0.0, 0.0);
+                }
+            }
         }
         None => {
             // No hit, render background
