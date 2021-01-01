@@ -1,13 +1,5 @@
 // Image dimensions
-const ASPECT_RATIO: f32 = 16.0 / 9.0;
-const IMAGE_WIDTH: u32 = 400;
-const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as u32;
-
-// Viewport
-const VIEWPORT_HEIGHT: f32 = 2.0;
-const VIEWPORT_WIDTH: f32 = ASPECT_RATIO * VIEWPORT_HEIGHT;
-const FOCAL_LENGTH: f32 = 1.0;
-
+mod camera;
 mod color;
 mod hittable;
 mod hittable_list;
@@ -20,6 +12,9 @@ use crate::hittable::*;
 use crate::ray::*;
 use crate::sphere::*;
 use crate::vec3::*;
+
+const IMAGE_WIDTH: u32 = 400;
+const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f32 / camera::ASPECT_RATIO) as u32;
 
 fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
     let world_hit = world.hit(&ray, 0.0, std::f32::INFINITY);
@@ -39,13 +34,7 @@ fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
 }
 
 fn main() {
-    // Camera
-    let origin = Point3::new(0.0, 0.0, 0.0);
-    let horizontal = Vec3::new(VIEWPORT_WIDTH, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
-    let lower_left_corner =
-        &origin - &(&horizontal / 2.0) - &vertical / 2.0 - Vec3::new(0.0, 0.0, FOCAL_LENGTH);
-
+    let camera = camera::Camera::new();
     let mut world = hittable_list::HittableList::new();
     world.add(Box::new(Sphere {
         center: Point3::new(0.0, 0.0, -1.0),
@@ -70,13 +59,7 @@ fn main() {
             let u: f32 = i as f32 / (IMAGE_WIDTH - 1) as f32;
             let v: f32 = j as f32 / (IMAGE_HEIGHT - 1) as f32;
 
-            let dir = &(&lower_left_corner + &(u * &horizontal) + (v * &vertical)) - &origin;
-            let ray = Ray {
-                orig: &origin,
-                dir: &dir,
-            };
-
-            let color = ray_color(&ray, &world);
+            let color = ray_color(&camera.get_ray(u, v), &world);
             color.write();
         }
     }

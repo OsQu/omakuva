@@ -12,7 +12,7 @@ impl hittable::Hittable for Sphere {
         // Calculate discriminant from ray-sphere intersection
         let oc = ray.orig - &self.center;
         let a = ray.dir.length_squared();
-        let half_b = oc.dot(ray.dir);
+        let half_b = oc.dot(&ray.dir);
         let c = oc.length_squared() - self.radius * self.radius;
 
         // Discriminant: b^2 - 4ac: == 0 -> 1 roots, > 0 -> 1 root
