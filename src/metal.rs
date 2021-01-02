@@ -6,11 +6,13 @@ use crate::vec3::*;
 
 pub struct Metal {
     albedo: color::Color,
+    fuzz: f32,
 }
 
 impl Metal {
-    pub fn new(albedo: color::Color) -> Metal {
-        Metal { albedo }
+    pub fn new(albedo: color::Color, mut fuzz: f32) -> Metal {
+        fuzz = if fuzz < 1.0 { fuzz } else { 1.0 };
+        Metal { albedo, fuzz }
     }
 }
 
@@ -23,7 +25,7 @@ impl material::Material for Metal {
         let reflected = ray_in.dir.unit_vector().reflect(&hit_record.normal);
         let scattered = ray::Ray {
             orig: &hit_record.point,
-            dir: reflected,
+            dir: reflected + self.fuzz * Vec3::random_in_unit_sphere(),
         };
 
         if scattered.dir.dot(&hit_record.normal) > 0.0 {
