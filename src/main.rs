@@ -18,13 +18,12 @@ use crate::ray::*;
 use crate::sphere::*;
 use crate::vec3::*;
 use rand::prelude::*;
-use std::f32;
 
 // Image dimensions
 pub const ASPECT_RATIO: f32 = 16.0 / 9.0;
 const IMAGE_WIDTH: u32 = 400;
 const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as u32;
-const SAMPLES_PER_PIXEL: i32 = 10;
+const SAMPLES_PER_PIXEL: i32 = 100;
 const MAX_DEPTH: i32 = 50;
 
 fn ray_color(ray: &Ray, world: &dyn Hittable, depth: i32) -> Color {
@@ -57,26 +56,47 @@ fn ray_color(ray: &Ray, world: &dyn Hittable, depth: i32) -> Color {
 
 fn main() {
     let mut rng = rand::thread_rng();
-    let camera = camera::Camera::new(90_f32, ASPECT_RATIO);
+    let camera = camera::Camera::new(
+        Point3::new(-2_f32, 2_f32, 1_f32),
+        Point3::new(0_f32, 0_f32, -1_f32),
+        Vec3::new(0_f32, 1_f32, 0_f32),
+        20_f32,
+        ASPECT_RATIO,
+    );
 
-    // World
-
-    let R: f32 = (f32::consts::PI / 4_f32).cos();
-
-    let material_left = lambertian::Lambertian::new(Color::new(0_f32, 0_f32, 1_f32));
-    let material_right = lambertian::Lambertian::new(Color::new(1_f32, 0_f32, 0_f32));
-
+    let material_ground = lambertian::Lambertian::new(Color::new(0.8, 0.8, 0.0));
+    let material_center = lambertian::Lambertian::new(Color::new(0.1, 0.2, 0.5));
+    let material_left = dielectric::Dielectric::new(1.5);
+    let material_right = metal::Metal::new(Color::new(0.8, 0.6, 0.2), 0.0);
     let mut world = hittable_list::HittableList::new();
 
     world.add(Box::new(Sphere {
-        center: Point3::new(-R, 0.0, -1.0),
-        radius: R,
+        center: Point3::new(0.0, -100.5, -1.0),
+        radius: 100.0,
+        material: &material_ground,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3::new(0.0, 0.0, -1.0),
+        radius: 0.5,
+        material: &material_center,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3::new(-1.0, 0.0, -1.0),
+        radius: 0.5,
         material: &material_left,
     }));
 
     world.add(Box::new(Sphere {
-        center: Point3::new(R, 0.0, -1.0),
-        radius: R,
+        center: Point3::new(-1.0, 0.0, -1.0),
+        radius: -0.4,
+        material: &material_left,
+    }));
+
+    world.add(Box::new(Sphere {
+        center: Point3::new(1.0, 0.0, -1.0),
+        radius: 0.5,
         material: &material_right,
     }));
     // Render
