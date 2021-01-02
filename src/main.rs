@@ -1,6 +1,7 @@
 // Image dimensions
 mod camera;
 mod color;
+mod dielectric;
 mod hittable;
 mod hittable_list;
 mod lambertian;
@@ -56,9 +57,9 @@ fn main() {
     let camera = camera::Camera::new();
 
     let material_ground = lambertian::Lambertian::new(Color::new(0.8, 0.8, 0.0));
-    let material_center = lambertian::Lambertian::new(Color::new(1.0, 0.2, 0.2));
-    let material_left = metal::Metal::new(Color::new(0.8, 0.8, 0.8), 0.3);
-    let material_right = metal::Metal::new(Color::new(0.8, 0.6, 0.2), 1.0);
+    let material_center = lambertian::Lambertian::new(Color::new(0.1, 0.2, 0.5));
+    let material_left = dielectric::Dielectric::new(1.5);
+    let material_right = metal::Metal::new(Color::new(0.8, 0.6, 0.2), 0.0);
     let mut world = hittable_list::HittableList::new();
 
     world.add(Box::new(Sphere {
